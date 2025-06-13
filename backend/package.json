@@ -13,6 +13,7 @@
   "type": "commonjs",
   "devDependencies": {
     "@types/express": "^5.0.3",
+    "@types/http-errors": "^2.0.5",
     "@types/morgan": "^1.9.10",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
@@ -22,6 +23,7 @@
     "dotenv": "^16.5.0",
     "envalid": "^8.0.0",
     "express": "^5.1.0",
+    "http-errors": "^2.0.0",
     "mongoose": "^8.15.1",
     "morgan": "^1.10.0"
   }
