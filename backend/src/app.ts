@@ -3,6 +3,9 @@ import notesRoutes from "./routes/notes";
 
 const app = express();
 
+// accept json body for Create
+app.use(express.json());
+
 app.use("/api/notes", notesRoutes);
 
 // catch all (404) middleware
