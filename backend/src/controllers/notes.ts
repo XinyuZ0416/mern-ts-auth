@@ -78,14 +78,14 @@ export const updateNote: RequestHandler<UpdateNoteParams, unknown, UpdateNoteBod
         // if user didn't enter title
         if (!newTitle) throw createHttpError(400, "Note must have a title!");
 
-        const note = await NoteModel.findById(noteId).exec();
-        // if there's no such note
-        if (!note) throw createHttpError(404, "Note not found!");
-        
-        note.title = newTitle;
-        note.text = newText;
+        await NoteModel.findByIdAndUpdate(noteId, {
+            title: newTitle,
+            text: newText
+        });
 
-        const updatedNote = await note.save();
+        const updatedNote = await NoteModel.findById(noteId).exec();
+        if (!updatedNote) throw createHttpError(404, "Note not found");
+        
         res.status(200).json(updatedNote);
     } catch (error) {
         next(error);
