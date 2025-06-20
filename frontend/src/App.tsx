@@ -3,9 +3,11 @@ import { Note as NoteModel } from './models/note';
 import Note from './components/Note';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import * as NotesApi from "./network/notes_api";
+import { AddNoteDialog } from './components/AddNoteDialog';
 
 function App() {
   const [ notes, setNotes ] = useState<NoteModel[]>([]);
+  const [ showAddNoteDialog, setShowAddNoteDialog ] = useState(false);
 
   useEffect(() => {
     const loadNotes = async() => {
@@ -22,7 +24,7 @@ function App() {
 
   return (
     <div>
-      <Button>Create</Button>
+      <Button onClick={() => setShowAddNoteDialog(true)}>Create</Button>
       {notes.map((note) => {
         return(
           <>
@@ -42,6 +44,12 @@ function App() {
           </>
         )
       })}
+
+      {showAddNoteDialog && 
+        <AddNoteDialog 
+          onDismiss={() => setShowAddNoteDialog(false)} 
+          onNoteSaved={() => {}}
+        />}
     </div>
   );
 }
