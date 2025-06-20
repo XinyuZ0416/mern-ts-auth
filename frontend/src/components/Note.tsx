@@ -1,12 +1,13 @@
 import React from 'react'
 import { Note as NoteModel } from "../models/note";
-import { Card, Container, Row } from 'react-bootstrap';
+import { Button, Card, Container, Row } from 'react-bootstrap';
 
 interface NoteProps {
     note: NoteModel,
+    onDeleteNoteClicked: (note: NoteModel) => void,
 }
 
-export const Note = ({ note }: NoteProps) => {
+export const Note = ({ note, onDeleteNoteClicked }: NoteProps) => {
   return (
     <>
     <Card>
@@ -24,6 +25,12 @@ export const Note = ({ note }: NoteProps) => {
             </Row>
             <Row>
               Updated at {note.updatedAt}
+            </Row>
+            <Row>
+              <Button onClick={(e) => {
+                onDeleteNoteClicked(note);
+                e.stopPropagation();
+              }}>Delete</Button>
             </Row>
           </Container>
         </Card.Text>

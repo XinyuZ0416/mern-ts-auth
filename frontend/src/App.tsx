@@ -22,6 +22,18 @@ function App() {
     loadNotes();
   },[]);
 
+  const deleteNote = async(note: NoteModel) => {
+    try {
+      await NotesApi.deleteNote(note._id);
+
+      // update frontend
+      setNotes(notes.filter(n => n._id !== note._id));
+    } catch (error) {
+      console.error(error);
+      alert(error);
+    }
+  }
+
   return (
     <div>
       <Button onClick={() => setShowAddNoteDialog(true)}>Create</Button>
@@ -30,13 +42,12 @@ function App() {
           <>
           <Container>
             <Row>
-              <Col><Note note={note} key={note._id} /></Col>
+              <Col>
+                <Note key={note._id} note={note} onDeleteNoteClicked={deleteNote} />
+              </Col>
               <Col>
                 <Row>
                   <Col><Button>Update</Button></Col>
-                </Row>
-                <Row>
-                  <Col><Button>Delete</Button></Col>
                 </Row>
               </Col>
             </Row>
