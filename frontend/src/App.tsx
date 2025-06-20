@@ -3,11 +3,12 @@ import { Note as NoteModel } from './models/note';
 import Note from './components/Note';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import * as NotesApi from "./network/notes_api";
-import { AddNoteDialog } from './components/AddNoteDialog';
+import { AddOrEditNoteDialog } from './components/AddOrEditNoteDialog';
 
 function App() {
   const [ notes, setNotes ] = useState<NoteModel[]>([]);
   const [ showAddNoteDialog, setShowAddNoteDialog ] = useState(false);
+  const [ noteToEdit, setNoteToEdit ] = useState<NoteModel | null>(null);
 
   useEffect(() => {
     const loadNotes = async() => {
@@ -43,12 +44,11 @@ function App() {
           <Container>
             <Row>
               <Col>
-                <Note key={note._id} note={note} onDeleteNoteClicked={deleteNote} />
-              </Col>
-              <Col>
-                <Row>
-                  <Col><Button>Update</Button></Col>
-                </Row>
+                <Note 
+                  key={note._id} 
+                  note={note} 
+                  onNoteClicked={setNoteToEdit}
+                  onDeleteNoteClicked={deleteNote} />
               </Col>
             </Row>
           </Container>
@@ -57,11 +57,21 @@ function App() {
       })}
 
       {showAddNoteDialog && 
-        <AddNoteDialog 
+        <AddOrEditNoteDialog 
           onDismiss={() => setShowAddNoteDialog(false)} 
           onNoteSaved={(newNote) => {
             setNotes([...notes, newNote]);
             setShowAddNoteDialog(false);
+          }}
+        />}
+
+      {noteToEdit && 
+        <AddOrEditNoteDialog 
+          noteToEdit={noteToEdit}
+          onDismiss={() => setNoteToEdit(null)} 
+          onNoteSaved={(updatedNote) => {
+            setNotes(notes.map(n => n._id === updatedNote._id ? updatedNote : n));
+            setNoteToEdit(null);
           }}
         />}
     </div>

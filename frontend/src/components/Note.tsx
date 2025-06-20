@@ -4,13 +4,14 @@ import { Button, Card, Container, Row } from 'react-bootstrap';
 
 interface NoteProps {
     note: NoteModel,
+    onNoteClicked: (note: NoteModel) => void,
     onDeleteNoteClicked: (note: NoteModel) => void,
 }
 
-export const Note = ({ note, onDeleteNoteClicked }: NoteProps) => {
+export const Note = ({ note, onNoteClicked, onDeleteNoteClicked }: NoteProps) => {
   return (
     <>
-    <Card>
+    <Card onClick={() => onNoteClicked(note)} style={{ cursor: "pointer"}}>
       <Card.Body>
         <Card.Title>
             {note.title}
@@ -42,17 +43,3 @@ export const Note = ({ note, onDeleteNoteClicked }: NoteProps) => {
 
 
 export default Note
-
-// export default function Note({ note }: NoteProps) {
-//   return (
-//     <>
-//     <Card>
-//         <Card.Body>
-//             <Card.Title>
-//                 {note.title}
-//             </Card.Title>
-//         </Card.Body>
-//     </Card>
-//     </>
-//   )
-// }
