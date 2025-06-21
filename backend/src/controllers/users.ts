@@ -9,6 +9,11 @@ interface SignUpBody {
     password?: string,
 }
 
+interface LoginBody {
+    username?: string,
+    password?: string,
+}
+
 // sign up
 export const signUp: RequestHandler<unknown, unknown, SignUpBody, unknown > = async(req, res, next) => {
     const username = req.body.username;
@@ -16,7 +21,7 @@ export const signUp: RequestHandler<unknown, unknown, SignUpBody, unknown > = as
     const passwordRaw = req.body.password;
 
     try {
-        // if user didn't put in username/ email/ passwordRaw
+        // if user didn't put in username/ email/ password
         if (!username || !email || !passwordRaw) throw createHttpError(400, "Username/ email/ password missing!");
 
         // check if username already exists
@@ -40,6 +45,31 @@ export const signUp: RequestHandler<unknown, unknown, SignUpBody, unknown > = as
         req.session.userId = newUser._id;
         
         res.status(201).json(newUser);
+    } catch (error) {
+        next(error);
+    }
+}
+
+// log in
+export const login: RequestHandler<unknown, unknown, LoginBody, unknown > = async(req, res, next) => {
+    const username = req.body.username;
+    const password = req.body.password;
+
+    try {
+        // if user didn't put in username/ password
+        if (!username || !password) throw createHttpError(400, "Username/ password missing!");
+        
+        // check if can find the user
+        const user = await UserModel.findOne({ username: username }).select("+password + email").exec();
+        if (!user) throw createHttpError(401, "Invalid credentials, check your username.");
+
+        // compare password
+        const passwordMatch = await bcrypt.compare(password, user.password);
+        if (!passwordMatch) throw createHttpError(401, "Invalid credentials, check your password");
+
+        // log user in
+        req.session.userId = user._id;
+        res.status(201).json(user);
     } catch (error) {
         next(error);
     }
