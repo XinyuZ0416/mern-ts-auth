@@ -4,7 +4,8 @@ import Note from './components/Note';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import * as NotesApi from "./network/notes_api";
 import { AddOrEditNoteDialog } from './components/AddOrEditNoteDialog';
-import SignUpModal from './components/SignUpModel';
+import SignUpModal from './components/SignUpModal';
+import LoginModal from './components/LoginModal';
 
 function App() {
   const [ notes, setNotes ] = useState<NoteModel[]>([]);
@@ -76,10 +77,17 @@ function App() {
           }}
         />}
 
-      {true &&
+      {false &&
         <SignUpModal 
           onDismiss={() => {}} 
           onSignUpSuccessful={() => {}}
+        />
+      }
+
+      {true &&
+        <LoginModal 
+          onDismiss={() => {}} 
+          onLoginSuccessful={() => {}}
         />
       }
     </div>
