@@ -6,6 +6,7 @@ import * as NotesApi from "./network/notes_api";
 import { AddOrEditNoteDialog } from './components/AddOrEditNoteDialog';
 import SignUpModal from './components/SignUpModal';
 import LoginModal from './components/LoginModal';
+import { NavBar } from './components/NavBar';
 
 function App() {
   const [ notes, setNotes ] = useState<NoteModel[]>([]);
@@ -39,6 +40,12 @@ function App() {
 
   return (
     <div>
+      <NavBar 
+        loggedInUser={null}
+        onLoginClicked={() => {}}
+        onSignUpClicked={() => {}}
+        onLogoutSuccessful={() => {}}
+      />
       <Button onClick={() => setShowAddNoteDialog(true)}>Create</Button>
       {notes.map((note) => {
         return(
@@ -84,7 +91,7 @@ function App() {
         />
       }
 
-      {true &&
+      {false &&
         <LoginModal 
           onDismiss={() => {}} 
           onLoginSuccessful={() => {}}
