@@ -37,6 +37,8 @@ export const signUp: RequestHandler<unknown, unknown, SignUpBody, unknown > = as
             password: passwordHashed,
         });
 
+        req.session.userId = newUser._id;
+        
         res.status(201).json(newUser);
     } catch (error) {
         next(error);
