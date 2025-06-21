@@ -14,21 +14,7 @@ interface LoginBody {
     password?: string,
 }
 
-// auth session
-export const getAuthenticatedUser: RequestHandler = async(req, res, next) => {
-    const authenticatedUserId = req.session.userId;
-
-    try {
-        if (!authenticatedUserId) throw createHttpError(401, "User not authenticated");
-
-        const user = await UserModel.findById(authenticatedUserId).select("+email").exec();
-        res.status(200).json(user);
-    } catch (error) {
-        next(error);
-    }
-}
-
-// sign up
+// sign up (create)
 export const signUp: RequestHandler<unknown, unknown, SignUpBody, unknown > = async(req, res, next) => {
     const username = req.body.username;
     const email = req.body.email;
@@ -64,7 +50,7 @@ export const signUp: RequestHandler<unknown, unknown, SignUpBody, unknown > = as
     }
 }
 
-// log in
+// log in (create)
 export const login: RequestHandler<unknown, unknown, LoginBody, unknown > = async(req, res, next) => {
     const username = req.body.username;
     const password = req.body.password;
@@ -84,6 +70,31 @@ export const login: RequestHandler<unknown, unknown, LoginBody, unknown > = asyn
         // log user in
         req.session.userId = user._id;
         res.status(201).json(user);
+    } catch (error) {
+        next(error);
+    }
+}
+
+// logout (create)
+export const logout:RequestHandler = async(req, res, next) => {
+    req.session.destroy(error => {
+        if (error) {
+            next(error);
+        } else {
+            res.sendStatus(200);
+        }
+    });
+}
+
+// auth session (read)
+export const getAuthenticatedUser: RequestHandler = async(req, res, next) => {
+    const authenticatedUserId = req.session.userId;
+
+    try {
+        if (!authenticatedUserId) throw createHttpError(401, "User not authenticated");
+
+        const user = await UserModel.findById(authenticatedUserId).select("+email").exec();
+        res.status(200).json(user);
     } catch (error) {
         next(error);
     }
