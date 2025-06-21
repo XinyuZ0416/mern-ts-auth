@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import notesRoutes from "./routes/notes";
+import usersRoutes from "./routes/users";
 import morgan from "morgan";
 import createHttpError, {isHttpError} from "http-errors";
 
@@ -10,6 +11,7 @@ app.use(morgan("dev"));
 // accept json body for Create
 app.use(express.json());
 
+app.use("/api/users", usersRoutes);
 app.use("/api/notes", notesRoutes);
 
 // catch all (404) middleware
