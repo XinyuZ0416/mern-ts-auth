@@ -1,100 +1,58 @@
 import React, { useEffect, useState } from 'react';
-import { Note as NoteModel } from './models/note';
-import Note from './components/Note';
-import { Button, Col, Container, Row } from 'react-bootstrap';
-import * as NotesApi from "./network/notes_api";
-import { AddOrEditNoteDialog } from './components/AddOrEditNoteDialog';
 import SignUpModal from './components/SignUpModal';
 import LoginModal from './components/LoginModal';
 import { NavBar } from './components/NavBar';
+import { User } from './models/user';
+import * as NotesApi from "./network/notes_api";
+import { NotesPageLoggedInView } from './components/NotesPageLoggedInView';
+import { NotesPageLoggedOutView } from './components/NotesPageLoggedOutView';
 
 function App() {
-  const [ notes, setNotes ] = useState<NoteModel[]>([]);
-  const [ showAddNoteDialog, setShowAddNoteDialog ] = useState(false);
-  const [ noteToEdit, setNoteToEdit ] = useState<NoteModel | null>(null);
+  const [ loggedInUser, setLoggedInUser ] = useState<User | null>(null);
+  const [ showSignUpModal, setShowSignUpModal ] = useState(false);
+  const [ showLoginModal, setShowLoginModal ] = useState(false);
 
   useEffect(() => {
-    const loadNotes = async() => {
+    const fetchLoggedInUser = async() => {
       try {
-        const notes = await NotesApi.fetchNotes();
-        setNotes(notes);
+        const user = await NotesApi.getLoggedInUser();
+        setLoggedInUser(user);
       } catch (error) {
         console.error(error);
-        alert(error);
       }
     }
-    loadNotes();
-  },[]);
-
-  const deleteNote = async(note: NoteModel) => {
-    try {
-      await NotesApi.deleteNote(note._id);
-
-      // update frontend
-      setNotes(notes.filter(n => n._id !== note._id));
-    } catch (error) {
-      console.error(error);
-      alert(error);
-    }
-  }
-
+    fetchLoggedInUser();
+    
+  }, []);
+  
   return (
     <div>
       <NavBar 
-        loggedInUser={null}
-        onLoginClicked={() => {}}
-        onSignUpClicked={() => {}}
-        onLogoutSuccessful={() => {}}
+        loggedInUser={loggedInUser}
+        onLoginClicked={() => setShowLoginModal(true)}
+        onSignUpClicked={() => setShowSignUpModal(true)}
+        onLogoutSuccessful={() => setLoggedInUser(null)}
       />
-      <Button onClick={() => setShowAddNoteDialog(true)}>Create</Button>
-      {notes.map((note) => {
-        return(
-          <>
-          <Container>
-            <Row>
-              <Col>
-                <Note 
-                  key={note._id} 
-                  note={note} 
-                  onNoteClicked={setNoteToEdit}
-                  onDeleteNoteClicked={deleteNote} />
-              </Col>
-            </Row>
-          </Container>
-          </>
-        )
-      })}
 
-      {showAddNoteDialog && 
-        <AddOrEditNoteDialog 
-          onDismiss={() => setShowAddNoteDialog(false)} 
-          onNoteSaved={(newNote) => {
-            setNotes([...notes, newNote]);
-            setShowAddNoteDialog(false);
-          }}
-        />}
+      {loggedInUser ? <NotesPageLoggedInView /> : <NotesPageLoggedOutView />}
 
-      {noteToEdit && 
-        <AddOrEditNoteDialog 
-          noteToEdit={noteToEdit}
-          onDismiss={() => setNoteToEdit(null)} 
-          onNoteSaved={(updatedNote) => {
-            setNotes(notes.map(n => n._id === updatedNote._id ? updatedNote : n));
-            setNoteToEdit(null);
-          }}
-        />}
-
-      {false &&
+      {showSignUpModal &&
         <SignUpModal 
-          onDismiss={() => {}} 
-          onSignUpSuccessful={() => {}}
+          onDismiss={() => setShowSignUpModal} 
+          onSignUpSuccessful={(user) => {
+            setLoggedInUser(user);
+            setShowSignUpModal(false);
+          }}
         />
       }
 
-      {false &&
+      {showLoginModal &&
         <LoginModal 
-          onDismiss={() => {}} 
-          onLoginSuccessful={() => {}}
+          onDismiss={() => setShowLoginModal(false)} 
+          onLoginSuccessful={(user) => {
+            setLoggedInUser(user);
+            setShowLoginModal(false);
+          }}
         />
       }
     </div>
