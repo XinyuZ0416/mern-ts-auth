@@ -44,5 +44,7 @@ jobs:
           export KUBECONFIG=$PWD/kubeconfig
 
       - name: Deploy to Kubernetes
+        env:
+          KUBECONFIG: ${{ github.workspace }}/kubeconfig
         run: |
           kubectl apply -f ./k8s
