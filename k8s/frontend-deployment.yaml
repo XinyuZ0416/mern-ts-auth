@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: frontend
-          image: xinyuz0416/mern-ts-frontend:latest
+          image: xinyuz0416/mern-ts-auth-frontend:latest
           ports:
             - containerPort: 3000
