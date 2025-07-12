@@ -33,6 +33,12 @@ jobs:
           docker build -t ${{ secrets.DOCKER_USERNAME }}/mern-ts-auth-frontend:latest ./frontend
           docker push ${{ secrets.DOCKER_USERNAME }}/mern-ts-auth-frontend:latest
 
+      # Install Google Cloud SDK components including the plugin
+            - name: Install gke-gcloud-auth-plugin
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
+          
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
         with:
@@ -41,7 +47,6 @@ jobs:
       - name: Load kubeconfig from secret
         run: |
           echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 -d > kubeconfig
-          export KUBECONFIG=$PWD/kubeconfig
 
       - name: Deploy to Kubernetes
         env:
