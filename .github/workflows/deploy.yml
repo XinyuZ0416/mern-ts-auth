@@ -34,10 +34,15 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/mern-ts-auth-frontend:latest
 
       # Install Google Cloud SDK components including the plugin
+      - name: Install Google Cloud SDK
+        run: |
+          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+          curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo tee /usr/share/keyrings/cloud.google.gpg
+          sudo apt-get update && sudo apt-get install -y google-cloud-sdk
+
       - name: Install gke-gcloud-auth-plugin
         run: |
-          sudo apt-get update
-          sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
+          gcloud components install gke-gcloud-auth-plugin --quiet
           
       - name: Set up kubectl
         uses: azure/setup-kubectl@v3
